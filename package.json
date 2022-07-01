@@ -2,14 +2,20 @@
   "name": "simple-server",
   "version": "1.0.0",
   "description": "",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "dist/cjs/index.js",
+  "module": "dist/mjs/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/mjs/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
   "files": [
     "dist",
     "package.json"
   ],
   "scripts": {
-    "dist": "tsc"
+    "build": "rm -rf ./dist && tsc -p tsconfig-esm.json && tsc -p tsconfig-cjs.json"
   },
   "author": "",
   "license": "MIT",

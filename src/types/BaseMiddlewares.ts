@@ -1,4 +1,4 @@
-import type Middleware from "../classes/Middleware";
+import type SynapseMiddleware from "../classes/SynapseMiddleware";
 
-type BaseMiddlewares = { [key: string]: Middleware };
+type BaseMiddlewares = { [key: string]: SynapseMiddleware };
 export default BaseMiddlewares;

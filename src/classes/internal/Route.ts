@@ -1,27 +1,27 @@
 import type HttpMethod from "../../enums/HttpMethod";
-import type Controller from "../Controller";
+import type SynapseController from "../SynapseController";
 import type { Express, Request as ExpressRequest, Response as ExpressResponse } from "express";
 import { controllerContext } from "../../symbols";
 import type ControllerContext from "./ControllerContext";
 import QueryNotSatisfied from "../error/QueryNotSatisfied";
-import Response from "../Response";
+import SynapseResponse from "../SynapseResponse";
 import HttpStatus from "../../enums/HttpStatus";
 import type ResponseInit from "../../interfaces/ResponseInit";
 import BodyNotSatisfied from "../error/BodyNotSatisfied";
-import Request from "../Request";
-import type Middleware from "../Middleware";
+import SynapseRequest from "../SynapseRequest";
+import type SynapseMiddleware from "../SynapseMiddleware";
 import HeaderNotSatisfied from "../error/HeaderNotSatisfied";
 
 export default class Route {
-    private controller: Controller;
+    private controller: SynapseController;
     private readonly route: string;
     private readonly method: HttpMethod;
     private readonly key: string;
 
-    private matchedMiddlewares: Middleware[];
+    private matchedMiddlewares: SynapseMiddleware[];
     private middlewareResponded = false;
 
-    private request: Request;
+    private request: SynapseRequest;
     private currentRequest: ExpressRequest;
     private currentResponse: ExpressResponse;
 
@@ -33,7 +33,7 @@ export default class Route {
         this.key = key;
     }
 
-    setController(controller: Controller) {
+    setController(controller: SynapseController) {
         this.controller = controller;
     }
 
@@ -55,7 +55,7 @@ export default class Route {
 
     attach(express: Express) {
         console.log("Attaching here", this.getMethod(), this.getRoute());
-        express[this.getMethod()](this.getRoute(), (req, res) => {
+        express[this.getMethod()](this.getRoute(), async (req, res) => {
             console.log(`[${this.getMethod()}] Incoming request`);
 
             this.middlewareResponded = false;
@@ -63,15 +63,15 @@ export default class Route {
             this.currentRequest = req;
             this.currentResponse = res;
 
-            this.request = new Request(this.currentRequest);
+            this.request = new SynapseRequest(this.currentRequest);
 
-            this.resolveMiddlewares();
+            await this.resolveMiddlewares();
 
             if (this.middlewareResponded) {
                 return;
             }
 
-            this.resolveRequest();
+            await this.resolveRequest();
         });
     }
 
@@ -97,7 +97,7 @@ export default class Route {
         }
     }
 
-    private resolveRequest() {
+    private async resolveRequest() {
         try {
             let handler = this.controller[this.getKey()];
 
@@ -106,13 +106,13 @@ export default class Route {
             }
 
             let result = handler.call(this.controller, this.request);
-            this.handleResult(result);
+            await this.handleResult(result);
         } catch (e) {
             this.handleError(e);
         }
     }
 
-    private handleResponseMiddlewares(response: Response) {
+    private handleResponseMiddlewares(response: SynapseResponse) {
         if (!this.middlewareResponded) {
             for (let matchedMiddleware of this.matchedMiddlewares) {
                 matchedMiddleware.processResponse(response);
@@ -121,7 +121,7 @@ export default class Route {
     }
 
     private respond(init: ResponseInit) {
-        let response = new Response(init);
+        let response = new SynapseResponse(init);
         this.handleResponseMiddlewares(response);
 
         return response.resolveExpressResponse(this.currentResponse, this.controller);
@@ -187,7 +187,7 @@ export default class Route {
             result = await result;
         }
 
-        if (result instanceof Response) {
+        if (result instanceof SynapseResponse) {
             this.handleResponseMiddlewares(result);
             result.resolveExpressResponse(this.currentResponse, this.controller);
         }

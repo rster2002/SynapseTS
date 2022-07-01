@@ -1,18 +1,18 @@
-import type App from "../App";
+import type SynapseApp from "../SynapseApp";
 import type { Express } from "express";
-import type Controller from "../Controller";
+import type SynapseController from "../SynapseController";
 import type Route from "./Route";
 
 export default class ControllerContext {
-    private readonly controller: Controller;
-    protected app: App;
+    private readonly controller: SynapseController;
+    protected app: SynapseApp;
 
     private routes = new Set<Route>();
     private allowCors: boolean | null = null;
 
     metaDataForKey = new Map<string, Map<string, unknown>>();
 
-    constructor(controller: Controller) {
+    constructor(controller: SynapseController) {
         this.controller = controller;
     }
 
@@ -25,7 +25,7 @@ export default class ControllerContext {
         this.routes.add(route);
     }
 
-    attachToApp(app: App, express: Express) {
+    attachToApp(app: SynapseApp, express: Express) {
         this.app = app;
 
         for (let route of Array.from(this.routes)) {

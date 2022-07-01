@@ -1,13 +1,13 @@
-import type Request from "./Request";
+import type SynapseRequest from "./SynapseRequest";
 import type Route from "./internal/Route";
-import type Response from "./Response";
+import type SynapseResponse from "./SynapseResponse";
 
-export default abstract class Middleware {
+export default abstract class SynapseMiddleware {
     private response: unknown;
 
     abstract matchRoute(route: Route): boolean;
-    abstract processRequest(request: Request): void;
-    abstract processResponse(response: Response): void;
+    abstract processRequest(request: SynapseRequest): void;
+    abstract processResponse(response: SynapseResponse): void;
 
     protected respondWith(response: unknown) {
         this.response = response;

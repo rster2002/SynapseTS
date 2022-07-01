@@ -4,7 +4,7 @@ import Validator from "./internal/Validator";
 import BodyNotSatisfied from "./error/BodyNotSatisfied";
 import HeaderNotSatisfied from "./error/HeaderNotSatisfied";
 
-export default class Request {
+export default class SynapseRequest {
     private internalRequest: ExpressRequest;
     metaData = new Map<string, unknown>();
 

@@ -1,27 +1,27 @@
-import type Controller from "./Controller";
+import type SynapseController from "./SynapseController";
 import { Express } from "express";
-import * as express from "express";
+import express from "express";
 import { controllerContext } from "../symbols";
-import type BaseMiddlewares from "../types/BaseMiddlewares";
+import SynapseMiddleware from "./SynapseMiddleware";
 
 interface AppInit {
     dev?: boolean,
     cors?: boolean
-    controllers?: Controller[]
-    middlewares?: BaseMiddlewares
+    controllers?: SynapseController[]
+    middlewares?: SynapseMiddleware[]
 }
 
-export default class App {
+export default class SynapseApp {
     private readonly expressInstance: Express;
-    private readonly controllers: Controller[];
-    private readonly middlewares: BaseMiddlewares;
+    private readonly controllers: SynapseController[];
+    private readonly middlewares: SynapseMiddleware[];
     cors: boolean;
     dev: boolean;
 
     constructor(init: AppInit) {
         this.cors = init.cors;
         this.controllers = init.controllers ?? [];
-        this.middlewares = init.middlewares ?? {};
+        this.middlewares = init.middlewares ?? [];
         this.dev = init.dev ?? false;
 
         this.expressInstance = express();
@@ -29,13 +29,13 @@ export default class App {
         this.expressInstance.use(express.json());
     }
 
-    start() {
+    start(port: number) {
         for (let controller of this.controllers) {
             controller[controllerContext].attachToApp(this, this.expressInstance);
         }
 
-        this.expressInstance.listen(5000);
-        console.log("Started on port 5000");
+        this.expressInstance.listen(port);
+        console.log(`Started on port ${port}`);
     }
 
     getMiddlewares() {

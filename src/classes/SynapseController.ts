@@ -1,24 +1,24 @@
-import Response from "./Response";
+import SynapseResponse from "./SynapseResponse";
 import HttpStatus from "../enums/HttpStatus";
 import type ResponseInit from "../interfaces/ResponseInit";
 import { controllerContext } from "../symbols";
 import type ControllerContext from "./internal/ControllerContext";
-import type Middleware from "./Middleware";
+import type SynapseMiddleware from "./SynapseMiddleware";
 
-export default abstract class Controller {
+export default abstract class SynapseController {
     [controllerContext]: ControllerContext;
 
-    getMiddleware<T extends Middleware>(middleware: new () => T): T {
+    getMiddleware<T extends SynapseMiddleware>(middleware: new () => T): T {
         let matchedMiddleware = this[controllerContext].getApp().getMiddlewares().find(i => i instanceof middleware);
         return <T> matchedMiddleware ?? null;
     }
 
     protected createResponse(init: ResponseInit = {}) {
-        return new Response(init);
+        return new SynapseResponse(init);
     }
 
     protected notFound(init: ResponseInit = {}) {
-        return new Response({
+        return new SynapseResponse({
             status: HttpStatus.NOT_FOUND,
             ...init,
         });
