@@ -1,8 +1,13 @@
 import type SynapseController from "./SynapseController";
 import { Express } from "express";
 import express from "express";
-import { controllerContext } from "../symbols";
+import { appSymbol, controllerContextSymbol } from "../symbols";
 import SynapseMiddleware from "./SynapseMiddleware";
+import SynapseRequest, { respondWith } from "./SynapseRequest";
+import RequestHelper from "./internal/RequestHelper";
+import MiddlewareHelper from "./internal/MiddlewareHelper";
+
+export const devMode = Symbol();
 
 interface AppInit {
     dev?: boolean,
@@ -15,23 +20,39 @@ export default class SynapseApp {
     private readonly expressInstance: Express;
     private readonly controllers: SynapseController[];
     private readonly middlewares: SynapseMiddleware[];
-    cors: boolean;
-    dev: boolean;
+
+    private readonly middlewareHelper = new MiddlewareHelper(this);
+    private readonly routeHelper = new RequestHelper(this);
+
+    [devMode] = false;
 
     constructor(init: AppInit) {
-        this.cors = init.cors;
-        this.controllers = init.controllers ?? [];
-        this.middlewares = init.middlewares ?? [];
-        this.dev = init.dev ?? false;
-
         this.expressInstance = express();
 
-        this.expressInstance.use(express.json());
+        this.controllers = init.controllers ?? [];
+        this.middlewares = init.middlewares ?? [];
+
+        this[devMode] = init.dev ?? false;
     }
 
     start(port: number) {
         for (let controller of this.controllers) {
-            controller[controllerContext].attachToApp(this, this.expressInstance);
+            controller[appSymbol] = this;
+
+            for (let route of controller[controllerContextSymbol].getRoutes()) {
+                this.expressInstance[route.getMethod()](route.getPath(), async (req, res) => {
+                    let request = new SynapseRequest(route, req, res);
+
+                    let middlewareResponse = await this.middlewareHelper.handleRequest(request);
+                    if (middlewareResponse) {
+                        request[respondWith](middlewareResponse);
+                        return;
+                    }
+
+                    let response = await this.routeHelper.handleRequest(request);
+                    request[respondWith](response);
+                });
+            }
         }
 
         this.expressInstance.listen(port);
@@ -39,6 +60,6 @@ export default class SynapseApp {
     }
 
     getMiddlewares() {
-        return Object.values(this.middlewares);
+        return this.middlewares;
     }
 }

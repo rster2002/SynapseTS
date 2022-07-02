@@ -1,1 +1,2 @@
-export const controllerContext = Symbol();
+export const controllerContextSymbol = Symbol();
+export const appSymbol = Symbol();

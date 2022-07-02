@@ -12,6 +12,12 @@ export default class Validator {
     }
 
     private validateValue(expected: unknown, value: unknown): boolean {
+        if (value === undefined) {
+            this.expected = expected;
+            this.received = value;
+            return false;
+        }
+
         if (Array.isArray(expected)) {
             if (!Array.isArray(value)) {
                 this.expected = expected;
@@ -19,6 +25,9 @@ export default class Validator {
                 return false;
             }
 
+            // For each element in the value array check if it matches one of the requirements in the target array.
+            // So given the expected [0, { value: "" }] it would check for each element in the value array if it matches
+            // either of the items in the expected array.
             return value.every(valueElement => {
                 let anyPass = false;
 

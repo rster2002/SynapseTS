@@ -1,19 +1,9 @@
 import type SynapseRequest from "./SynapseRequest";
-import type Route from "./internal/Route";
 import type SynapseResponse from "./SynapseResponse";
+import RouteResult from "../types/RouteResult";
 
 export default abstract class SynapseMiddleware {
-    private response: unknown;
-
-    abstract matchRoute(route: Route): boolean;
-    abstract processRequest(request: SynapseRequest): void;
-    abstract processResponse(response: SynapseResponse): void;
-
-    protected respondWith(response: unknown) {
-        this.response = response;
-    }
-
-    getPossibleResponse() {
-        return this.response;
-    }
+    matchRoute?(request: SynapseRequest): boolean;
+    processRequest?(request: SynapseRequest): undefined | null | RouteResult;
+    processResponse?(response: SynapseResponse): void;
 }

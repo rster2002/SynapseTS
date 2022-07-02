@@ -1,4 +1,6 @@
-export default class BodyNotSatisfied extends Error {
+import ValidationError from "./ValidationError";
+
+export default class BodyNotSatisfied extends ValidationError {
     private expected: unknown;
     private received: unknown;
 
