@@ -5,7 +5,10 @@ import BodyNotSatisfied from "./error/BodyNotSatisfied";
 import HeaderNotSatisfied from "./error/HeaderNotSatisfied";
 import SynapseRoute from "./SynapseRoute";
 import SynapseResponse, { resolveExpressResponse } from "./SynapseResponse";
-import LiteralValidationDefinition, { NumberLiteralValidationDefinition } from "../interfaces/LiteralValidationDefinition";
+import LiteralValidationDefinition, {
+    NumberLiteralValidationDefinition,
+    StringLiteralValidationDefinition
+} from "../interfaces/LiteralValidationDefinition";
 import LiteralValidator from "./internal/LiteralValidator";
 import ValidationError from "./error/ValidationError";
 
@@ -42,16 +45,12 @@ export default class SynapseRequest {
         }
     }
 
+    getParam(name: string) {
+        return this.internalRequest.params[name] ?? null;
+    }
+
     getPath() {
         return this.internalRequest.path;
-    }
-
-    getQuery(key: string): string {
-        return <string> this.internalRequest.query[key];
-    }
-
-    getHeader(name: string) {
-        return this.internalRequest.get(name) ?? null;
     }
 
     getMetaObject() {
@@ -68,22 +67,35 @@ export default class SynapseRequest {
         return value ?? null;
     }
 
-    requireHeader(name: string) {
-        let header = this.getHeader(name);
+    getHeader(name: string) {
+        return this.internalRequest.get(name) ?? null;
+    }
+
+    requireHeader(name: string): string
+    requireHeader(name: string, validationDefinition: NumberLiteralValidationDefinition): number
+    requireHeader(name: string, validationDefinition: StringLiteralValidationDefinition): string
+    requireHeader(name: string, validationDefinition?: LiteralValidationDefinition): string | number {
+        let header: unknown = this.getHeader(name);
 
         if (header === undefined) {
             throw new HeaderNotSatisfied(name);
         }
 
-        return header;
+        if (validationDefinition) {
+            let validator = new LiteralValidator();
+            header = validator.validate(header, validationDefinition);
+        }
+
+        return <string | number> header;
     }
 
-    getParam(name: string) {
-        return this.internalRequest.params[name] ?? null;
+    getQuery(key: string): string {
+        return <string> this.internalRequest.query[key];
     }
 
     requireQuery(key: string): string
     requireQuery(key: string, validationDefinition: NumberLiteralValidationDefinition): number
+    requireQuery(key: string, validationDefinition: StringLiteralValidationDefinition): string
     requireQuery(key: string, validationDefinition?: LiteralValidationDefinition): string | number {
         let value: unknown = this.getQuery(key);
 

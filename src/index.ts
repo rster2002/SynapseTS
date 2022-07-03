@@ -4,6 +4,9 @@ export { default as SynapseController } from "./classes/SynapseController";
 export { default as SynapseMiddleware } from "./classes/SynapseMiddleware";
 export { default as SynapseResponse } from "./classes/SynapseResponse";
 
+// Functions
+export { default as customDecoratorFactory } from "./functions/customDecoratorFactory";
+
 // Decorators
 export { default as Get } from "./decorators/Get";
 export { default as Post } from "./decorators/Post";
@@ -21,3 +24,4 @@ export { default as HttpStatus } from "./enums/HttpStatus";
 export type { default as SynapseRoute } from "./classes/SynapseRoute";
 export type { default as SynapseRequest } from "./classes/SynapseRequest";
 export type { default as RouteResult } from "./types/RouteResult";
+export type { RouteExecutor } from "./classes/internal/ControllerContext";

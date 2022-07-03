@@ -36,6 +36,20 @@ export default class LiteralValidator {
     }
 
     private validateString(value: unknown, validator: StringLiteralValidationDefinition): string {
-        return String(value);
+        let stringValue = String(value);
+
+        if (validator.fixedLength && stringValue.length !== validator.fixedLength) {
+            throw new LiteralValidationError(`Expected value ${value} to have exact length of ${validator.fixedLength}`);
+        }
+
+        if (validator.minLength && stringValue.length < validator.minLength) {
+            throw new LiteralValidationError(`Expected number ${value} to have a length greater or equal to ${validator.minLength}`);
+        }
+
+        if (validator.maxLength && stringValue.length > validator.maxLength) {
+            throw new LiteralValidationError(`Expected number ${value} to have a length less or equal to ${validator.maxLength}`);
+        }
+
+        return stringValue;
     }
 }
