@@ -14,4 +14,13 @@ export default abstract class SynapseController {
             body: null,
         });
     }
+
+    protected createValidationError(status: HttpStatus, message?: string) {
+        return new SynapseResponse({
+            status,
+            body: JSON.stringify({
+                error: message,
+            }),
+        })
+    }
 }

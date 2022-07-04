@@ -6,6 +6,7 @@ import SynapseMiddleware from "./SynapseMiddleware";
 import SynapseRequest, { respondWith } from "./SynapseRequest";
 import RequestHelper from "./internal/RequestHelper";
 import MiddlewareHelper from "./internal/MiddlewareHelper";
+import cors from "cors";
 
 export const devMode = Symbol();
 
@@ -28,6 +29,9 @@ export default class SynapseApp {
 
     constructor(init: AppInit) {
         this.expressInstance = express();
+
+        this.expressInstance.use(express.json({type: '*/*'}));
+        this.expressInstance.use(cors());
 
         this.controllers = init.controllers ?? [];
         this.middlewares = init.middlewares ?? [];

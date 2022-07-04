@@ -20,7 +20,7 @@ export default class SynapseRoute {
     }
 
     async execute(request: SynapseRequest) {
-        return this.executor(request);
+        return this.executor.call(this.controller, request);
     }
 
     getMethod() {
