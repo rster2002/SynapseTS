@@ -1,26 +1,9 @@
 import { appSymbol, controllerContextSymbol } from "../symbols";
 import type ControllerContext from "./internal/ControllerContext";
-import HttpStatus from "../enums/HttpStatus";
-import SynapseResponse from "./SynapseResponse";
 import SynapseApp from "./SynapseApp";
+import ResponseUtilsSynapseComponent from "./internal/ResponseUtilsSynapseComponent";
 
-export default abstract class SynapseController {
+export default abstract class SynapseController extends ResponseUtilsSynapseComponent {
     [appSymbol]: SynapseApp;
     [controllerContextSymbol]: ControllerContext;
-
-    protected createResponseWithStatus(status: HttpStatus) {
-        return new SynapseResponse({
-            status,
-            body: null,
-        });
-    }
-
-    protected createValidationError(status: HttpStatus, message?: string) {
-        return new SynapseResponse({
-            status,
-            body: JSON.stringify({
-                error: message,
-            }),
-        })
-    }
 }

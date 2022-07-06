@@ -2,9 +2,12 @@ import type HttpMethod from "../enums/HttpMethod";
 import SynapseRequest from "./SynapseRequest";
 import RouteExecutor from "../types/RouteExecutor";
 import SynapseController from "./SynapseController";
+import SynapseComponent from "./SynapseComponent";
 
-export default class SynapseRoute {
-    private readonly controller: SynapseController;
+export const setController = Symbol();
+
+export default class SynapseRoute extends SynapseComponent {
+    private controller: SynapseController;
 
     private readonly path: string;
     private readonly method: HttpMethod;
@@ -13,6 +16,8 @@ export default class SynapseRoute {
     private readonly metaData = new Map<string, unknown>();
 
     constructor(path: string, method: HttpMethod, controller: SynapseController, executor: RouteExecutor) {
+        super();
+
         this.path = path;
         this.method = method;
         this.controller = controller;
@@ -37,5 +42,9 @@ export default class SynapseRoute {
 
     getMetaData(key: string) {
         return this.metaData.get(key) ?? null;
+    }
+
+    [setController](controller: SynapseController) {
+        this.controller = controller;
     }
 }
