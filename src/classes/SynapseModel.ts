@@ -1,28 +1,12 @@
-import SynapseQuery from "./SynapseQuery";
+import ModelContext from "./internal/ModelContext";
+import SynapseComponent from "./SynapseComponent";
 
-export default abstract class SynapseModel<T> {
-    constructor() {
-    }
+export const modelContext = Symbol();
 
-    static getByPrimaryKey(key: string) {
-        // return new SynapseQuery(this);
-    }
+export default abstract class SynapseModel extends SynapseComponent {
+    [modelContext]: ModelContext = null;
 
-    static query() {
-        return new SynapseQuery(this);
-    }
+    async create() {
 
-    resolveQuery(query: SynapseQuery): T {
-        return new this();
     }
 }
-
-class User extends SynapseModel<User> {
-    resolveQuery(): Promise<this> {
-        return Promise.resolve(undefined);
-    }
-}
-
-User.query()
-    .where("name").is("bjorn")
-    .get();
