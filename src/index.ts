@@ -3,6 +3,7 @@ export { default as SynapseApp } from "./classes/SynapseApp";
 export { default as SynapseController } from "./classes/SynapseController";
 export { default as SynapseMiddleware } from "./classes/SynapseMiddleware";
 export { default as SynapseResponse } from "./classes/SynapseResponse";
+export { default as SynapseComponent } from "./classes/SynapseComponent";
 
 // Functions
 export { default as customDecoratorFactory } from "./functions/customDecoratorFactory";
