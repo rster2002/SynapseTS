@@ -31,13 +31,13 @@ export default abstract class SynapseDriver<T = null> extends SynapseComponent {
     }
 
     get Model(): typeof SynapseModel {
-        let context = new ModelContext();
+        let classConstructor = class extends SynapseModel {}
+
+        let context: ModelContext = classConstructor[modelContext] = classConstructor[modelContext] ?? new ModelContext();
         //@ts-ignore
         context.setDriver(this);
 
-        return class extends SynapseModel {
-            [modelContext] = context;
-        }
+        return classConstructor;
     }
 
     get Migration(): typeof SynapseMigration<T> {

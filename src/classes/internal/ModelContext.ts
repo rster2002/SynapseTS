@@ -1,9 +1,22 @@
 import SynapseDriver from "../SynapseDriver";
 
 export default class ModelContext {
-    private readonly driver: SynapseDriver;
+    driver: SynapseDriver = null;
+    primaryField: string = null;
 
-    constructor(driver: SynapseDriver) {
+    setDriver(driver: SynapseDriver) {
+        if (this.driver !== null) {
+            throw new Error("Cannot reassign driver");
+        }
+
         this.driver = driver;
+    }
+
+    setPrimaryField(fieldName: string) {
+        if (this.primaryField !== null) {
+            throw new Error("Cannot have multiple primary fields");
+        }
+
+        this.primaryField = fieldName;
     }
 }
