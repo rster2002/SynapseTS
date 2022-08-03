@@ -5,7 +5,6 @@ import SynapseRequest from "../SynapseRequest";
 import ValidationError from "../error/ValidationError";
 import { appSymbol } from "../../symbols";
 import SynapseApp, { devMode } from "../SynapseApp";
-import e from "express";
 
 export default class ResultTransformer {
     [appSymbol]: SynapseApp;
@@ -64,6 +63,7 @@ export default class ResultTransformer {
                 });
             }
 
+            console.log();
             return new SynapseResponse({
                 status: HttpStatus.BAD_REQUEST,
                 body: error.message,

@@ -11,11 +11,12 @@ import LiteralValidationDefinition, {
 } from "../interfaces/LiteralValidationDefinition";
 import LiteralValidator from "./internal/LiteralValidator";
 import ValidationError from "./error/ValidationError";
+import SynapseComponent from "./SynapseComponent";
 
 export const execute = Symbol();
 export const respondWith = Symbol();
 
-export default class SynapseRequest {
+export default class SynapseRequest extends SynapseComponent {
     private readonly route: SynapseRoute;
     private readonly internalRequest: ExpressRequest;
     private readonly internalResponse: ExpressResponse;
@@ -25,6 +26,8 @@ export default class SynapseRequest {
     private responded = false;
 
     constructor(route: SynapseRoute, req: ExpressRequest, res: ExpressResponse) {
+        super();
+
         this.route = route;
         this.internalRequest = req;
         this.internalResponse = res;

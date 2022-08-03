@@ -29,6 +29,7 @@ export default class MiddlewareHelper extends AppComponent {
             let result = middleware.processRequest?.(request);
 
             if (result !== undefined) {
+                //@ts-ignore
                 return this.resultTransformer.transformResult(result);
             }
 
