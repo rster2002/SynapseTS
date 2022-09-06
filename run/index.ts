@@ -1,14 +1,11 @@
 import { Get, SynapseApp, SynapseController, SynapseRequest } from "../src";
 
 class TestController extends SynapseController {
-    private a = { b: 10 }
+    private a = { b: 10 };
 
     @Get("/test")
     test(request: SynapseRequest) {
-
-        return {
-            test: this.a.b,
-        }
+        return request.requireQuery("a", "number");
     }
 }
 

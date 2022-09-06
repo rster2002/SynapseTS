@@ -97,6 +97,8 @@ export default class SynapseRequest extends SynapseComponent {
     }
 
     requireQuery(key: string): string
+    requireQuery(key: string, validationDefinition: "string"): string
+    requireQuery(key: string, validationDefinition: "number"): number
     requireQuery(key: string, validationDefinition: NumberLiteralValidationDefinition): number
     requireQuery(key: string, validationDefinition: StringLiteralValidationDefinition): string
     requireQuery(key: string, validationDefinition?: LiteralValidationDefinition): string | number {

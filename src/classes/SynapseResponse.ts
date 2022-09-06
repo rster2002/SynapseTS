@@ -28,4 +28,20 @@ export default class SynapseResponse extends SynapseComponent {
         response.status(this.status);
         response.send(this.body);
     }
+
+    static httpStatus(status: HttpStatus): SynapseResponse {
+        return new SynapseResponse({
+            status,
+            body: null,
+        });
+    }
+
+    static validationError(status: HttpStatus, message?: string) {
+        return new SynapseResponse({
+            status,
+            body: JSON.stringify({
+                error: message,
+            }),
+        });
+    }
 }

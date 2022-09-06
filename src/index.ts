@@ -6,7 +6,7 @@ export { default as SynapseResponse } from "./classes/SynapseResponse";
 export { default as SynapseComponent } from "./classes/SynapseComponent";
 
 // Functions
-export { default as customDecoratorFactory } from "./functions/customDecoratorFactory";
+export { default as createCustomDecorator } from "./functions/createCustomDecorator";
 
 // Decorators
 export { default as Get } from "./decorators/Get";

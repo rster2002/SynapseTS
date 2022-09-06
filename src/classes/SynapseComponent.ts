@@ -6,32 +6,21 @@ import LiteralValidator from "./internal/LiteralValidator";
 
 export default abstract class SynapseComponent {
     protected getEnvKey(key): string | null
-    protected getEnvKey(key, validationDefinition: NumberLiteralValidationDefinition): number
-    protected getEnvKey(key, validationDefinition: StringLiteralValidationDefinition): string
-    protected getEnvKey(key, defaultValue: number, validationDefinition: NumberLiteralValidationDefinition): number
-    protected getEnvKey(key, defaultValue: string, validationDefinition: StringLiteralValidationDefinition): string
-    protected getEnvKey<T>(key: string, defaultValue: T): string | T
-    protected getEnvKey<T>(
-        key: string,
-        defaultValue: T | LiteralValidationDefinition = null,
-        validationDefinition?: LiteralValidationDefinition
-    ): number | string | null | T {
+    protected getEnvKey(key, defaultValue: number): number
+    protected getEnvKey(key, defaultValue: string): string
+    protected getEnvKey<T>(key, defaultValue: T): T
+    protected getEnvKey<T>(key: string, defaultValue?: unknown): number | string | T {
         let value = <string> process.env[key.toUpperCase()] ?? null;
 
-        if (!defaultValue) {
+        if (defaultValue === undefined) {
             return value;
         }
 
         let validator = new LiteralValidator();
-        if ("type" in defaultValue) {
-            return validator.validate(value, defaultValue);
+        if (typeof defaultValue === "number") {
+            return validator.validate(value, { type: "number" });
         }
 
-        if (!validationDefinition) {
-            return value ?? defaultValue;
-        }
-
-        let isValid = validator.validate(value, validationDefinition);
-        return isValid ? value : defaultValue;
+        return value;
     }
 }
