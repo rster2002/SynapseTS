@@ -1,8 +1,8 @@
 import SynapseComponent from "./SynapseComponent";
 import SynapseDriver from "./SynapseDriver";
-import DriverCreateStatement from "../interfaces/DriverStatements/DriverCreateStatement";
+import InternalDriverCreateStatement from "../interfaces/DriverStatements/internal/InternalDriverCreateStatement";
 import DriverQueryStatement from "../interfaces/DriverStatements/DriverQueryStatement";
-import DriverUpdateStatement from "../interfaces/DriverStatements/DriverUpdateStatement";
+import InternalDriverUpdateStatement from "../interfaces/DriverStatements/internal/InternalDriverUpdateStatement";
 
 export default abstract class SynapseRepository extends SynapseComponent {
     private readonly driver: SynapseDriver;
@@ -13,7 +13,7 @@ export default abstract class SynapseRepository extends SynapseComponent {
         this.driver = driver;
     }
 
-    protected async create(statement: DriverCreateStatement) {
+    protected async create(statement: InternalDriverCreateStatement) {
         return await this.driver.create(statement);
     }
 
@@ -21,7 +21,7 @@ export default abstract class SynapseRepository extends SynapseComponent {
         return await this.driver.read(statement);
     }
 
-    protected async update(statement: DriverUpdateStatement) {
+    protected async update(statement: InternalDriverUpdateStatement) {
         return await this.driver.update(statement);
     }
 

@@ -1,6 +1,6 @@
 import DriverStatement from "./DriverStatement";
-import DriverFilter from "./DriverFilter";
+import { LiteralFilter } from "./DriverFilter";
 
 export default interface DriverQueryStatement extends DriverStatement {
-    filter: DriverFilter[];
+    filter: LiteralFilter[];
 }

@@ -1,14 +1,15 @@
 import SynapseDriver from "../src/classes/SynapseDriver";
-import DriverCreateStatement from "../src/interfaces/DriverStatements/DriverCreateStatement";
+import InternalDriverCreateStatement from "../src/interfaces/DriverStatements/internal/InternalDriverCreateStatement";
 import DriverQueryStatement from "../src/interfaces/DriverStatements/DriverQueryStatement";
-import DriverUpdateStatement from "../src/interfaces/DriverStatements/DriverUpdateStatement";
+import InternalDriverUpdateStatement from "../src/interfaces/DriverStatements/internal/InternalDriverUpdateStatement";
 import Identifier from "../src/decorators/Identifier";
 import DriverValueRef from "../src/interfaces/DriverStatements/DriverValueRef";
+import SynapseRepository from "../src/classes/SynapseRepository";
 
 class TestDriver extends SynapseDriver {
     private entities = [];
 
-    async create(statement: DriverCreateStatement): Promise<void> {
+    async create(statement: InternalDriverCreateStatement): Promise<void> {
         this.entities.push(statement.data);
         return;
         // return Promise.resolve(undefined);
@@ -43,32 +44,14 @@ class TestDriver extends SynapseDriver {
         return Promise.resolve(undefined);
     }
 
-    update(statement: DriverUpdateStatement): Promise<void> {
+    update(statement: InternalDriverUpdateStatement): Promise<void> {
         return Promise.resolve(undefined);
     }
 }
 
 let driver = new TestDriver();
 
-class User extends driver.Model {
-    @Identifier
-    private id: string = "a";
-    private name: string;
-    private age: number;
-
-    constructor(name: string, age: number) {
-        super();
-
-        this.name = name;
-        this.age = age;
-    }
+interface User {
+    name: string;
+    age: number;
 }
-
-async function main() {
-    let alice = new User("Alice", 44);
-
-    await alice.create();
-    let user = await User.getById("a");
-}
-
-main();

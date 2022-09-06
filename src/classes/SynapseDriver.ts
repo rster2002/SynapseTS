@@ -1,10 +1,12 @@
 import SynapseComponent from "./SynapseComponent";
 import DriverQueryStatement from "../interfaces/DriverStatements/DriverQueryStatement";
-import DriverCreateStatement from "../interfaces/DriverStatements/DriverCreateStatement";
-import DriverUpdateStatement from "../interfaces/DriverStatements/DriverUpdateStatement";
+import InternalDriverCreateStatement from "../interfaces/DriverStatements/internal/InternalDriverCreateStatement";
+import InternalDriverUpdateStatement from "../interfaces/DriverStatements/internal/InternalDriverUpdateStatement";
 import SynapseModel, { modelContext } from "../classes/SynapseModel";
 import ModelContext from "../classes/internal/ModelContext";
 import SynapseMigration from "./SynapseMigration";
+import InternalDriverQueryStatement from "../interfaces/DriverStatements/internal/InternalDriverQueryStatement";
+import DriverFilter, { LiteralFilter } from "../interfaces/DriverStatements/DriverFilter";
 
 export interface DriverOptions {
     schemaless: boolean;
@@ -21,10 +23,30 @@ export default abstract class SynapseDriver<T = null> extends SynapseComponent {
         this.options = options;
     }
 
-    abstract create(statement: DriverCreateStatement): Promise<void>;
-    abstract read(statement: DriverQueryStatement): Promise<object[]>;
-    abstract update(statement: DriverUpdateStatement): Promise<void>;
-    abstract remove(statement: DriverQueryStatement): Promise<void>;
+    async executeCreate(statement: InternalDriverCreateStatement) {
+        await this.create(statement);
+    }
+
+    async executeRead(statement: DriverQueryStatement) {
+        await this.read(statement);
+    }
+
+    async executeUpdate(statement: InternalDriverUpdateStatement) {
+        await this.update(statement);
+    }
+
+    async executeRemove(statement: DriverQueryStatement) {
+        await this.remove(statement);
+    }
+
+    private transformLiteralFilter(literalStatement: LiteralFilter): DriverFilter {
+        // let parts = literalStatement.split(" ");
+    }
+
+    protected abstract create(statement: InternalDriverCreateStatement): Promise<void>;
+    protected abstract read(statement: InternalDriverQueryStatement): Promise<object[]>;
+    protected abstract update(statement: InternalDriverUpdateStatement): Promise<void>;
+    protected abstract remove(statement: DriverQueryStatement): Promise<void>;
 
     createMigrationHelper(): T {
         return null;

@@ -1,8 +1,14 @@
-// type DriverValueRef = { value: unknown } | { field: string; model?: string };
+import DriverRefType from "../../enums/DriverRefType";
+import DriverFieldRef from "./DriverValueRef/DriverFieldRef";
+import StringValueRef from "./DriverValueRef/StringValueRef";
+import NumberValueRef from "./DriverValueRef/NumberValueRef";
 
+type DriverValueRef = DriverFieldRef
+    | StringValueRef
+    | NumberValueRef;
 
-export default interface DriverValueRef {
-    value?: unknown;
-    field?: string;
-    model?: string;
-};
+export default DriverValueRef;
+
+export interface BaseDriverValueRef {
+    type: DriverRefType;
+}
