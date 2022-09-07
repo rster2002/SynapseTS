@@ -2,12 +2,14 @@ import type { Response as ExpressResponse } from "express";
 import type ResponseInit from "../interfaces/ResponseInit";
 import HttpStatus from "../enums/HttpStatus";
 import SynapseComponent from "./SynapseComponent";
+import ValidationError from "./error/ValidationError";
 
 export const resolveExpressResponse = Symbol();
 
 export default class SynapseResponse extends SynapseComponent {
     private status: HttpStatus = HttpStatus.OK;
     private body: unknown;
+    private headers = new Map<string, string>();
 
     constructor(init: ResponseInit = {}) {
         super();
@@ -24,8 +26,27 @@ export default class SynapseResponse extends SynapseComponent {
         this.body = body;
     }
 
+    setHeaders(headers: { [key: string]: string }) {
+        for (let [key, value] of Object.entries(headers)) {
+            this.setHeader(key, value);
+        }
+    }
+
+    setHeader(key: string, value: string) {
+        this.headers.set(key, value);
+    }
+
+    removeHeader(key: string) {
+        this.headers.delete(key);
+    }
+
     [resolveExpressResponse](response: ExpressResponse) {
         response.status(this.status);
+
+        for (let [key, value] of Array.from(this.headers.entries())) {
+            response.setHeader(key, value);
+        }
+
         response.send(this.body);
     }
 

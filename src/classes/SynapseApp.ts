@@ -9,6 +9,7 @@ import MiddlewareHelper from "./internal/MiddlewareHelper";
 import path from "path";
 import cors from "cors";
 import asyncGlob from "../utils/asyncGlob";
+import SynapseComponent from "./SynapseComponent";
 
 export const devMode = Symbol();
 
@@ -22,7 +23,7 @@ interface AppInit {
     appDir?: string;
 }
 
-export default class SynapseApp {
+export default class SynapseApp extends SynapseComponent {
     private readonly expressInstance: Express;
     private readonly controllers: SynapseController[];
     private readonly middlewares: SynapseMiddleware[];
@@ -36,6 +37,8 @@ export default class SynapseApp {
     [devMode] = false;
 
     constructor(init: AppInit) {
+        super();
+
         this.expressInstance = express();
 
         this.expressInstance.use(express.json({type: '*/*'}));
@@ -77,6 +80,13 @@ export default class SynapseApp {
                     }
 
                     let response = await this.routeHelper.handleRequest(request);
+
+                    let responseReplacement = await this.middlewareHelper.handleResponse(request, response);
+                    if (responseReplacement) {
+                        request[respondWith](responseReplacement);
+                        return;
+                    }
+
                     request[respondWith](response);
                 });
             }
