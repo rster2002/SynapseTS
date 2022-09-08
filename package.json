@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "build": "rm -rf ./dist && tsc -p tsconfig-esm.json && tsc -p tsconfig-cjs.json",
-    "run": "ts-node --esm run/index.ts"
+    "run": "node -r ts-node/register run/index.ts"
   },
   "author": "",
   "license": "MIT",

@@ -10,6 +10,10 @@ import path from "path";
 import cors from "cors";
 import asyncGlob from "../utils/asyncGlob";
 import SynapseComponent from "./SynapseComponent";
+import { Worker } from "worker_threads";
+import * as readline from "readline";
+import ServerShell from "./internal/ServerShell";
+import SynapseCommand from "./SynapseCommand";
 
 export const devMode = Symbol();
 
@@ -18,6 +22,7 @@ interface AppInit {
     cors?: boolean;
     controllers?: SynapseController[];
     middlewares?: SynapseMiddleware[];
+    commands?: SynapseCommand[];
 
     auto?: boolean;
     appDir?: string;
@@ -25,8 +30,10 @@ interface AppInit {
 
 export default class SynapseApp extends SynapseComponent {
     private readonly expressInstance: Express;
+    private readonly serverPrompt: ServerShell;
     private readonly controllers: SynapseController[];
     private readonly middlewares: SynapseMiddleware[];
+    private readonly commands: SynapseCommand[];
 
     private readonly middlewareHelper = new MiddlewareHelper(this);
     private readonly routeHelper = new RequestHelper(this);
@@ -40,12 +47,14 @@ export default class SynapseApp extends SynapseComponent {
         super();
 
         this.expressInstance = express();
+        this.serverPrompt = new ServerShell(this);
 
         this.expressInstance.use(express.json({type: '*/*'}));
         this.expressInstance.use(cors());
 
         this.controllers = init.controllers ?? [];
         this.middlewares = init.middlewares ?? [];
+        this.commands = init.commands ?? [];
 
         this[devMode] = init.dev ?? false;
 
@@ -64,6 +73,7 @@ export default class SynapseApp extends SynapseComponent {
         if (this.automaticComponentResolution) {
             await this.resolveAutomaticControllers();
             await this.resolveAutomaticMiddlewares();
+            await this.resolveAutomaticCommands();
         }
 
         for (let controller of this.controllers) {
@@ -97,7 +107,10 @@ export default class SynapseApp extends SynapseComponent {
         console.log(`Started!`);
         console.log(`Controllers:\t\t${this.controllers.length}`);
         console.log(`Middlewares:\t\t${this.middlewares.length}`);
+        console.log(`Commands:\t\t${this.commands.length}`);
         console.log(`Port:\t\t\t${port}`);
+
+        this.serverPrompt.start();
     }
 
     getMiddlewares() {
@@ -119,6 +132,15 @@ export default class SynapseApp extends SynapseComponent {
         for (let module of modules) {
             let instance = new module.default();
             this.middlewares.push(instance);
+        }
+    }
+
+    private async resolveAutomaticCommands(): Promise<void> {
+        let modules = await this.resolveFilesInDirectory("commands");
+
+        for (let module of modules) {
+            let instance = new module.default();
+            this.commands.push(instance);
         }
     }
 
