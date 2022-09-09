@@ -1,8 +1,9 @@
 import type HttpMethod from "../enums/HttpMethod";
-import SynapseRequest from "./SynapseRequest";
+import ExpressSynapseRequest from "./ExpressSynapseRequest";
 import RouteExecutor from "../types/RouteExecutor";
 import SynapseController from "./SynapseController";
 import SynapseComponent from "./SynapseComponent";
+import pathToRegex from "../utils/pathToRegex";
 
 export const setController = Symbol();
 
@@ -24,7 +25,7 @@ export default class SynapseRoute extends SynapseComponent {
         this.executor = executor;
     }
 
-    async execute(request: SynapseRequest) {
+    async execute(request: ExpressSynapseRequest) {
         return this.executor.call(this.controller, request);
     }
 
@@ -42,6 +43,14 @@ export default class SynapseRoute extends SynapseComponent {
 
     getMetaData(key: string) {
         return this.metaData.get(key) ?? null;
+    }
+
+    matchPath(path: string) {
+        return this.getPathRegex().match(path);
+    }
+
+    getPathRegex() {
+        return pathToRegex(this.path);
     }
 
     [setController](controller: SynapseController) {

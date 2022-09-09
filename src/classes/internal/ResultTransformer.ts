@@ -1,7 +1,7 @@
 import RouteResult from "../../types/RouteResult";
 import SynapseResponse from "../SynapseResponse";
 import HttpStatus from "../../enums/HttpStatus";
-import SynapseRequest from "../SynapseRequest";
+import ExpressSynapseRequest from "../ExpressSynapseRequest";
 import ValidationError from "../error/ValidationError";
 import { appSymbol } from "../../symbols";
 import SynapseApp, { devMode } from "../SynapseApp";
@@ -47,7 +47,7 @@ export default class ResultTransformer {
         });
     }
 
-    transformError(request: SynapseRequest, error: Error) {
+    transformError(request: ExpressSynapseRequest, error: Error) {
         if (error instanceof ValidationError) {
             let accept = request.getHeader("Accept");
 

@@ -23,6 +23,6 @@ export { default as HttpStatus } from "./enums/HttpStatus";
 
 // Types
 export type { default as SynapseRoute } from "./classes/SynapseRoute";
-export type { default as SynapseRequest } from "./classes/SynapseRequest";
+export type { default as SynapseRequest } from "./interfaces/SynapseRequest";
 export type { default as RouteResult } from "./types/RouteResult";
 export type { RouteExecutor } from "./classes/internal/ControllerContext";

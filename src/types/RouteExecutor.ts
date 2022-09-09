@@ -1,5 +1,5 @@
-import SynapseRequest from "../classes/SynapseRequest";
+import ExpressSynapseRequest from "../classes/ExpressSynapseRequest";
 import RouteResult from "./RouteResult";
 
-type RouteExecutor = (request: SynapseRequest) => RouteResult | Promise<RouteResult>;
+type RouteExecutor = (request: ExpressSynapseRequest) => RouteResult | Promise<RouteResult>;
 export default RouteExecutor;

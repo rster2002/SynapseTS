@@ -1,5 +1,5 @@
 import AppComponent from "./AppComponent";
-import SynapseRequest from "../SynapseRequest";
+import ExpressSynapseRequest from "../ExpressSynapseRequest";
 import SynapseResponse from "../SynapseResponse";
 import SynapseMiddleware from "../SynapseMiddleware";
 import ResultTransformer from "./ResultTransformer";
@@ -8,7 +8,7 @@ import { appSymbol } from "../../symbols";
 export default class MiddlewareHelper extends AppComponent {
     private readonly resultTransformer = new ResultTransformer(this[appSymbol]);
 
-    async handleRequest(request: SynapseRequest): Promise<SynapseResponse> {
+    async handleRequest(request: ExpressSynapseRequest): Promise<SynapseResponse> {
         let middlewares = this.getApp().getMiddlewares();
 
         for (let middleware of middlewares) {
@@ -24,7 +24,7 @@ export default class MiddlewareHelper extends AppComponent {
         }
     }
 
-    private async processMiddleware(request: SynapseRequest, middleware: SynapseMiddleware): Promise<SynapseResponse | null> {
+    private async processMiddleware(request: ExpressSynapseRequest, middleware: SynapseMiddleware): Promise<SynapseResponse | null> {
         try {
             let result = middleware.processRequest?.(request);
 

@@ -2,7 +2,7 @@ import type SynapseController from "./SynapseController";
 import express, { Express } from "express";
 import { appSymbol, controllerContextSymbol } from "../symbols";
 import SynapseMiddleware from "./SynapseMiddleware";
-import SynapseRequest, { respondWith } from "./SynapseRequest";
+import ExpressSynapseRequest, { respondWith } from "./ExpressSynapseRequest";
 import RequestHelper from "./internal/RequestHelper";
 import MiddlewareHelper from "./internal/MiddlewareHelper";
 import cors from "cors";
@@ -58,7 +58,7 @@ export default class SynapseApp extends SynapseComponent {
                 route[setController](controller);
 
                 this.expressInstance[route.getMethod()](route.getPath(), async (req, res) => {
-                    let request = new SynapseRequest(route, req, res);
+                    let request = new ExpressSynapseRequest(route, req, res);
 
                     let middlewareResponse = await this.middlewareHelper.handleRequest(request);
                     if (middlewareResponse) {

@@ -12,11 +12,14 @@ import LiteralValidationDefinition, {
 import LiteralValidator from "./internal/LiteralValidator";
 import ValidationError from "./error/ValidationError";
 import SynapseComponent from "./SynapseComponent";
+import SynapseRequest from "../interfaces/SynapseRequest";
+import { ParamsDictionary } from "express-serve-static-core";
+import { ParsedQs } from "qs";
 
 export const execute = Symbol();
 export const respondWith = Symbol();
 
-export default class SynapseRequest extends SynapseComponent {
+export default class ExpressSynapseRequest extends SynapseComponent implements SynapseRequest {
     private readonly route: SynapseRoute;
     private readonly internalRequest: ExpressRequest;
     private readonly internalResponse: ExpressResponse;
@@ -93,7 +96,7 @@ export default class SynapseRequest extends SynapseComponent {
     }
 
     getQuery(key: string): string {
-        return <string> this.internalRequest.query[key];
+        return <string> this.internalRequest.query[key] ?? null;
     }
 
     requireQuery(key: string): string

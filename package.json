@@ -8,6 +8,10 @@
     ".": {
       "import": "./dist/mjs/index.js",
       "require": "./dist/cjs/index.js"
+    },
+    "./testing": {
+      "import": "./dist/mjs/testing.js",
+      "require": "./dist/cjs/testing.js"
     }
   },
   "files": [
