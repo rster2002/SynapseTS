@@ -1,24 +1,26 @@
 import type SynapseController from "./SynapseController";
-import express, { Express } from "express";
+import { Express } from "express";
+import express from "express";
 import { appSymbol, controllerContextSymbol } from "../symbols";
 import SynapseMiddleware from "./SynapseMiddleware";
 import ExpressSynapseRequest, { respondWith } from "./ExpressSynapseRequest";
 import RequestHelper from "./internal/RequestHelper";
 import MiddlewareHelper from "./internal/MiddlewareHelper";
+import path from "path";
 import cors from "cors";
-import { setController } from "./SynapseRoute";
+import asyncGlob from "../utils/asyncGlob";
 import SynapseComponent from "./SynapseComponent";
-import * as dotenv from "dotenv";
-import ControllerContext from "./internal/ControllerContext";
 
 export const devMode = Symbol();
 
 interface AppInit {
-    dev?: boolean,
-    cors?: boolean
-    envPath?: string
-    controllers?: SynapseController[]
-    middlewares?: SynapseMiddleware[]
+    dev?: boolean;
+    cors?: boolean;
+    controllers?: SynapseController[];
+    middlewares?: SynapseMiddleware[];
+
+    auto?: boolean;
+    appDir?: string;
 }
 
 export default class SynapseApp extends SynapseComponent {
@@ -29,8 +31,10 @@ export default class SynapseApp extends SynapseComponent {
     private readonly middlewareHelper = new MiddlewareHelper(this);
     private readonly routeHelper = new RequestHelper(this);
 
+    private readonly automaticComponentResolution: boolean = false;
+    private readonly appDirectory: string;
+
     [devMode] = false;
-    private readonly envPath?: string;
 
     constructor(init: AppInit) {
         super();
@@ -44,19 +48,28 @@ export default class SynapseApp extends SynapseComponent {
         this.middlewares = init.middlewares ?? [];
 
         this[devMode] = init.dev ?? false;
-        this.envPath = init.envPath;
+
+        if (init.auto) {
+            this.automaticComponentResolution = true;
+
+            if (init.appDir === undefined) {
+                throw new Error("Cannot use automatic component resolution without specifying an app directory");
+            }
+
+            this.appDirectory = init.appDir;
+        }
     }
 
-    start(port: number) {
-        dotenv.config({ path: this.envPath, });
+    async start(port: number) {
+        if (this.automaticComponentResolution) {
+            await this.resolveAutomaticControllers();
+            await this.resolveAutomaticMiddlewares();
+        }
 
         for (let controller of this.controllers) {
             controller[appSymbol] = this;
-            controller[controllerContextSymbol] = controller[controllerContextSymbol] ?? new ControllerContext(controller);
 
             for (let route of controller[controllerContextSymbol].getRoutes()) {
-                route[setController](controller);
-
                 this.expressInstance[route.getMethod()](route.getPath(), async (req, res) => {
                     let request = new ExpressSynapseRequest(route, req, res);
 
@@ -67,16 +80,59 @@ export default class SynapseApp extends SynapseComponent {
                     }
 
                     let response = await this.routeHelper.handleRequest(request);
+
+                    let responseReplacement = await this.middlewareHelper.handleResponse(request, response);
+                    if (responseReplacement) {
+                        request[respondWith](responseReplacement);
+                        return;
+                    }
+
                     request[respondWith](response);
                 });
             }
         }
 
         this.expressInstance.listen(port);
-        console.log(`Started on port ${port}`);
+
+        console.log(`Started!`);
+        console.log(`Controllers:\t\t${this.controllers.length}`);
+        console.log(`Middlewares:\t\t${this.middlewares.length}`);
+        console.log(`Port:\t\t\t${port}`);
     }
 
     getMiddlewares() {
         return this.middlewares;
+    }
+
+    private async resolveAutomaticControllers(): Promise<void> {
+        let modules = await this.resolveFilesInDirectory("controllers");
+
+        for (let module of modules) {
+            let instance = new module.default();
+            this.controllers.push(instance);
+        }
+    }
+
+    private async resolveAutomaticMiddlewares(): Promise<void> {
+        let modules = await this.resolveFilesInDirectory("middlewares");
+
+        for (let module of modules) {
+            let instance = new module.default();
+            this.middlewares.push(instance);
+        }
+    }
+
+    private async resolveFilesInDirectory(directory: string): Promise<any[]> {
+        let globPattern = path.resolve(this.appDirectory, `./${directory}/**/*.ts`);
+        let filePaths = await asyncGlob(globPattern);
+
+        let modules = [];
+
+        for (let filePath of filePaths) {
+            filePath = filePath.replace(/.ts$/, "");
+            modules.push(await import(filePath));
+        }
+
+        return modules;
     }
 }

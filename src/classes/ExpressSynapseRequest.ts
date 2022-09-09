@@ -100,6 +100,8 @@ export default class ExpressSynapseRequest extends SynapseComponent implements S
     }
 
     requireQuery(key: string): string
+    requireQuery(key: string, validationDefinition: "string"): string
+    requireQuery(key: string, validationDefinition: "number"): number
     requireQuery(key: string, validationDefinition: NumberLiteralValidationDefinition): number
     requireQuery(key: string, validationDefinition: StringLiteralValidationDefinition): string
     requireQuery(key: string, validationDefinition?: LiteralValidationDefinition): string | number {
