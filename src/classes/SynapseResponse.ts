@@ -2,7 +2,6 @@ import type { Response as ExpressResponse } from "express";
 import type ResponseInit from "../interfaces/ResponseInit";
 import HttpStatus from "../enums/HttpStatus";
 import SynapseComponent from "./SynapseComponent";
-import ValidationError from "./error/ValidationError";
 
 export const resolveExpressResponse = Symbol();
 
@@ -16,6 +15,8 @@ export default class SynapseResponse extends SynapseComponent {
 
         this.setStatus(init.status);
         this.setBody(init.body);
+
+        this.setHeaders(init.headers);
     }
 
     setStatus(status: HttpStatus) {
@@ -63,6 +64,15 @@ export default class SynapseResponse extends SynapseComponent {
             body: JSON.stringify({
                 error: message,
             }),
+        });
+    }
+
+    static redirect(url: string) {
+        return new SynapseResponse({
+            status: HttpStatus.TEMPORARY_REDIRECT,
+            headers: {
+                "Location": url,
+            },
         });
     }
 }

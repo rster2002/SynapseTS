@@ -37,10 +37,6 @@ export default class SynapseRequest extends SynapseComponent {
         return await this.route.execute(this);
     }
 
-    getRoute() {
-        return this.route;
-    }
-
     [respondWith](response: SynapseResponse) {
         if (!this.responded) {
             response[resolveExpressResponse](this.internalResponse);
@@ -48,18 +44,41 @@ export default class SynapseRequest extends SynapseComponent {
         }
     }
 
+    /**
+     * Returns the matched route for this request.
+     */
+    getRoute() {
+        return this.route;
+    }
+
+    /**
+     * Get a parameter from the url.
+     * @example Given the following route: `/users/:id` you can get the value of `:id` using `request.getParam("id");`
+     * @param name Name of the parameter to return
+     * @returns Returns the value of the parameter or `null` if the parameter does not exist.
+     */
     getParam(name: string) {
         return this.internalRequest.params[name] ?? null;
     }
 
+    /**
+     * Returns the requested path.
+     */
     getPath() {
         return this.internalRequest.path;
     }
 
+    /**
+     * Returns the meta map, which can be used to add additional information to the request.
+     */
     getMetaObject() {
         return this.metaData;
     }
 
+    /**
+     * Directly get a value from the meta map.
+     * @param key Key of the value you want to return.
+     */
     getMetaData(key: string) {
         let value = this.metaData.get(key);
 
@@ -70,11 +89,29 @@ export default class SynapseRequest extends SynapseComponent {
         return value ?? null;
     }
 
+    /**
+     * Gets the value of the header.
+     * @param name Name of the header to return the value of.
+     * @returns Returns the value of the header, or `null` if the header was not present in the request.
+     */
     getHeader(name: string) {
         return this.internalRequest.get(name) ?? null;
     }
 
+    /**
+     * Ensures that the header is present.
+     * @param name Name of the header to return the value of.
+     * @return Returns the value of the header. If the header is not present on the request it throws a ValidationError.
+     */
     requireHeader(name: string): string
+
+    /**
+     * Ensures that the header is present and that the value of the header is a number.
+     * @param name Name of the header to return the value of.
+     * @param validationDefinition Validation rules for the number.
+     * @returns Returns the value of the header as a number. If the header is not present on the request or the value is
+     * not a number it throws a ValidationError.
+     */
     requireHeader(name: string, validationDefinition: NumberLiteralValidationDefinition): number
     requireHeader(name: string, validationDefinition: StringLiteralValidationDefinition): string
     requireHeader(name: string, validationDefinition?: LiteralValidationDefinition): string | number {

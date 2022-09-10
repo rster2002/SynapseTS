@@ -14,15 +14,46 @@ import SynapseComponent from "./SynapseComponent";
 export const devMode = Symbol();
 
 interface AppInit {
+    /**
+     * Enables additional logging and returns the contents of internal server errors during requests.
+     * @default false
+     */
     dev?: boolean;
+
+    /**
+     * Globally enables or disables CORS.
+     * @default true
+     */
     cors?: boolean;
+
+    /**
+     * Array of SynapseController instances which are used for handling incoming requests.
+     */
     controllers?: SynapseController[];
+
+    /**
+     * Array of SynapseMiddleware instances which are used to hook into requests and responses.
+     */
     middlewares?: SynapseMiddleware[];
 
+    /**
+     * Enables automatic component detection. Allows the app to check the default paths for components for files and
+     * automatically instantiates them and adds them to the application.
+     * @default false
+     */
     auto?: boolean;
+
+    /**
+     * Required when `auto` is set to true. Sets the root directory of the application from which the app will search
+     * for components to automatically load.
+     */
     appDir?: string;
 }
 
+/**
+ * Main object of the application. This is where different components are registered to and where global options are
+ * set.
+ */
 export default class SynapseApp extends SynapseComponent {
     private readonly expressInstance: Express;
     private readonly controllers: SynapseController[];
@@ -60,7 +91,11 @@ export default class SynapseApp extends SynapseComponent {
         }
     }
 
-    async start(port: number) {
+    /**
+     * Starts automatically importing components and starts listening to incoming requests.
+     * @param {number} [port=5000] - Port number where the application will listen for incoming requests.
+     */
+    async start(port: number = 5000) {
         if (this.automaticComponentResolution) {
             await this.resolveAutomaticControllers();
             await this.resolveAutomaticMiddlewares();
@@ -100,6 +135,16 @@ export default class SynapseApp extends SynapseComponent {
         console.log(`Port:\t\t\t${port}`);
     }
 
+    /**
+     * Returns an array with all the registered controllers.
+     */
+    getControllers() {
+        return this.controllers;
+    }
+
+    /**
+     * Returns an array with all the registered middlewares.
+     */
     getMiddlewares() {
         return this.middlewares;
     }

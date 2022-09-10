@@ -1,11 +1,10 @@
-import { Get, SynapseController, SynapseRequest } from "../../src";
-import { HttpAuthenticate } from "../decorators/HttpAuthenticate";
+import { Get, SynapseController, SynapseRequest, SynapseResponse } from "../../src";
+import { HttpAuthenticate, Role } from "../decorators/HttpAuthenticate";
 
 export default class TestController extends SynapseController {
     @Get("/test")
-    @HttpAuthenticate()
+    @HttpAuthenticate([Role.ADMIN])
     test(request: SynapseRequest) {
         return "hi";
-        // return request.requireQuery("a", "number");
     }
 }

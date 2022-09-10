@@ -5,4 +5,4 @@ const app = new SynapseApp({
     appDir: __dirname,
 });
 
-app.start(5000);
+app.start();
