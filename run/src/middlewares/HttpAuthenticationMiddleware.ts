@@ -1,5 +1,5 @@
-import { HttpStatus, SynapseMiddleware, SynapseRequest, SynapseResponse } from "../../src";
-import RouteResult from "../../src/types/RouteResult";
+import { HttpStatus, SynapseMiddleware, SynapseRequest, SynapseResponse } from "../../../src";
+import RouteResult from "../../../src/types/RouteResult";
 import { Role } from "../decorators/HttpAuthenticate";
 
 export default class HttpAuthenticationMiddleware extends SynapseMiddleware {

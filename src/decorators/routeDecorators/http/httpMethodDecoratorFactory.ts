@@ -1,7 +1,7 @@
-import { controllerContextSymbol } from "../symbols";
-import ControllerContext, { routeQueue } from "../classes/internal/ControllerContext";
-import SynapseRoute from "../classes/SynapseRoute";
-import HttpMethod from "../enums/HttpMethod";
+import { controllerContextSymbol } from "../../../symbols";
+import ControllerContext, { routeQueue } from "../../../classes/internal/ControllerContext";
+import SynapseRoute from "../../../classes/SynapseRoute";
+import HttpMethod from "../../../enums/HttpMethod";
 
 export default function httpMethodDecoratorFactory(path, httpMethod: HttpMethod) {
     return function (target: any, fieldName: string) {

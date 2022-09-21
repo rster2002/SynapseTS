@@ -28,6 +28,10 @@ export default class SynapseResponse extends SynapseComponent {
     }
 
     setHeaders(headers: { [key: string]: string }) {
+        if (headers === undefined || headers === null) {
+            return;
+        }
+
         for (let [key, value] of Object.entries(headers)) {
             this.setHeader(key, value);
         }

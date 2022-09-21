@@ -1,0 +1,7 @@
+{
+  "name": "run",
+  "version": "1.0.0",
+  "scripts": {
+    "dist": "rm -rf src/dist && tsc -p tsconfig.json"
+  }
+}

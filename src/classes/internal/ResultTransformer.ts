@@ -2,9 +2,9 @@ import RouteResult from "../../types/RouteResult";
 import SynapseResponse from "../SynapseResponse";
 import HttpStatus from "../../enums/HttpStatus";
 import SynapseRequest from "../SynapseRequest";
-import ValidationError from "../error/ValidationError";
 import { appSymbol } from "../../symbols";
 import SynapseApp, { devMode } from "../SynapseApp";
+import ValidationError from "../error/ValidationError";
 
 export default class ResultTransformer {
     [appSymbol]: SynapseApp;

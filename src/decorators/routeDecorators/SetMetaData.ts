@@ -1,5 +1,5 @@
-import { controllerContextSymbol } from "../symbols";
-import ControllerContext from "../classes/internal/ControllerContext";
+import { controllerContextSymbol } from "../../symbols";
+import ControllerContext from "../../classes/internal/ControllerContext";
 
 export default function SetMetaData(key: string, value?: unknown) {
     return function (target: any, fieldName: string) {

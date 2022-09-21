@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "sourceMap": false,
+    "baseUrl": "./src",
+    "experimentalDecorators": true,
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "lib": ["esnext"]
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

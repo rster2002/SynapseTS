@@ -1,4 +1,4 @@
-import { createCustomDecorator } from "../../src";
+import { createCustomDecorator } from "../../../src";
 
 export enum Role {
     ADMIN = "admin",
