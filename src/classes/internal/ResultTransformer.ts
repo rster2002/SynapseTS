@@ -2,10 +2,9 @@ import RouteResult from "../../types/RouteResult";
 import SynapseResponse from "../SynapseResponse";
 import HttpStatus from "../../enums/HttpStatus";
 import SynapseRequest from "../SynapseRequest";
-import ValidationError from "../error/ValidationError";
 import { appSymbol } from "../../symbols";
 import SynapseApp, { devMode } from "../SynapseApp";
-import e from "express";
+import ValidationError from "../error/ValidationError";
 
 export default class ResultTransformer {
     [appSymbol]: SynapseApp;
@@ -43,12 +42,10 @@ export default class ResultTransformer {
             });
         }
 
-        return new SynapseResponse({
-            status: HttpStatus.NOT_IMPLEMENTED,
-        });
+        return null;
     }
 
-    transformError(request: SynapseRequest, error: Error) {
+    transformError(request: SynapseRequest, error: RouteResult) {
         if (error instanceof ValidationError) {
             let accept = request.getHeader("Accept");
 
@@ -70,7 +67,7 @@ export default class ResultTransformer {
             });
         }
 
-        if (this[appSymbol][devMode]) {
+        if (error instanceof Error && this[appSymbol][devMode]) {
             return new SynapseResponse({
                 status: HttpStatus.INTERNAL_SERVER_ERROR,
                 headers: {
@@ -83,6 +80,12 @@ export default class ResultTransformer {
                     stack: error.stack,
                 }),
             })
+        }
+
+        let formattedResponse = this.transformResult(error);
+
+        if (formattedResponse !== null) {
+            return formattedResponse;
         }
 
         return new SynapseResponse({

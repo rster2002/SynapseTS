@@ -1,6 +1,6 @@
 {
   "name": "synapse-ts",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "",
   "main": "dist/cjs/index.js",
   "module": "dist/mjs/index.js",
@@ -15,16 +15,21 @@
     "package.json"
   ],
   "scripts": {
-    "build": "rm -rf ./dist && tsc -p tsconfig-esm.json && tsc -p tsconfig-cjs.json"
+    "build": "rm -rf ./dist && tsc -p tsconfig-esm.json && tsc -p tsconfig-cjs.json",
+    "run": "ts-node --esm run/src/index.ts"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.18.1"
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "glob": "^8.0.3"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
+    "@types/glob": "^8.0.0",
+    "ts-node": "^10.8.2",
     "typescript": "^4.7.4"
   }
 }

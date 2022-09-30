@@ -6,6 +6,14 @@ import LiteralValidationError from "../error/LiteralValidationError";
 
 export default class LiteralValidator {
     validate(value: unknown, validator: LiteralValidationDefinition): string | number {
+        if (validator === "string") {
+            validator = { type: validator };
+        }
+
+        if (validator === "number") {
+            validator = { type: validator };
+        }
+
         if (validator.type === "number") {
             return this.validateNumber(value, validator);
         }

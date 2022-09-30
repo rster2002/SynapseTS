@@ -2,7 +2,9 @@ interface BaseLiteralValidationDefinition {
     type: "string" | "number"
 }
 
-type LiteralValidationDefinition = NumberLiteralValidationDefinition
+type LiteralValidationDefinition = "string"
+    | "number"
+    | NumberLiteralValidationDefinition
     | StringLiteralValidationDefinition;
 export default LiteralValidationDefinition;
 
