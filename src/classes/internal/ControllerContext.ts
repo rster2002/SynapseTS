@@ -12,13 +12,9 @@ interface ExecutorEntry {
 }
 
 export default class ControllerContext {
-    private readonly controller: SynapseController;
+    private controller: SynapseController;
     private readonly routes: SynapseRoute[] = [];
     [routeQueue]: { [key: string]: ExecutorEntry[] } = {};
-
-    constructor(controller: SynapseController) {
-        this.controller = controller;
-    }
 
     registerRoute(route: SynapseRoute) {
         this.routes.push(route);
@@ -26,6 +22,14 @@ export default class ControllerContext {
 
     getRoutes() {
         return this.routes;
+    }
+
+    setController(controller: SynapseController) {
+        this.controller = controller;
+    }
+
+    getController() {
+        return this.controller;
     }
 
     [pushToQueue](key: string, executor: RouteExecutor<unknown[]>, params: unknown[]) {

@@ -4,7 +4,7 @@ import ControllerContext, { pushToQueue, RouteExecutor, routeQueue } from "../cl
 export default function createCustomDecorator<T extends any[]>(executor: RouteExecutor<T>) {
     return function(...rest: T) {
         return function(target: any, fieldName: string) {
-            let context: ControllerContext = target[controllerContextSymbol] = target[controllerContextSymbol] ?? new ControllerContext(target);
+            let context: ControllerContext = target[controllerContextSymbol] = target[controllerContextSymbol] ?? new ControllerContext();
             context[pushToQueue](fieldName, executor, rest);
         }
     }

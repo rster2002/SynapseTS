@@ -3,29 +3,30 @@ import SynapseRequest from "./SynapseRequest";
 import RouteExecutor from "../types/RouteExecutor";
 import SynapseController from "./SynapseController";
 import SynapseComponent from "./SynapseComponent";
+import ControllerContext from "./internal/ControllerContext";
 
 export const setController = Symbol();
 
 export default class SynapseRoute extends SynapseComponent {
-    private controller: SynapseController;
+    private controllerContext: ControllerContext;
 
     private readonly path: string;
     private readonly method: HttpMethod;
-    private readonly executor: RouteExecutor;
+    private readonly executorName: string;
 
     private readonly metaData = new Map<string, unknown>();
 
-    constructor(path: string, method: HttpMethod, controller: SynapseController, executor: RouteExecutor) {
+    constructor(path: string, method: HttpMethod, controllerContext: ControllerContext, executorName: string) {
         super();
 
         this.path = path;
         this.method = method;
-        this.controller = controller;
-        this.executor = executor;
+        this.controllerContext = controllerContext;
+        this.executorName = executorName;
     }
 
     async execute(request: SynapseRequest) {
-        return this.executor.call(this.controller, request);
+        return this.controllerContext.getController()[this.executorName](request);
     }
 
     getMethod() {
@@ -42,9 +43,5 @@ export default class SynapseRoute extends SynapseComponent {
 
     getMetaData(key: string) {
         return this.metaData.get(key) ?? null;
-    }
-
-    [setController](controller: SynapseController) {
-        this.controller = controller;
     }
 }

@@ -5,9 +5,9 @@ import HttpMethod from "../../../enums/HttpMethod";
 
 export default function httpMethodDecoratorFactory(path, httpMethod: HttpMethod) {
     return function (target: any, fieldName: string) {
-        let context: ControllerContext = target[controllerContextSymbol] = target[controllerContextSymbol] ?? new ControllerContext(target);
+        let context: ControllerContext = target[controllerContextSymbol] = target[controllerContextSymbol] ?? new ControllerContext();
 
-        let route = new SynapseRoute(path, httpMethod, target, target[fieldName])
+        let route = new SynapseRoute(path, httpMethod, context, fieldName)
         let executors = context[routeQueue][fieldName] ?? [];
 
         for (let executorEntry of executors) {

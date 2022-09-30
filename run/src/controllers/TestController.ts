@@ -1,4 +1,4 @@
-import { Get, Scope, SynapseController, SynapseRequest } from "../../../src";
+import { Get, SynapseController, SynapseRequest } from "../../../src";
 
 export default class TestController extends SynapseController {
     @Get("/test")
@@ -6,10 +6,10 @@ export default class TestController extends SynapseController {
         return request.requireQuery("name", "number");
     }
 
+    abc = "dev";
+
     @Get("/haha")
     haha() {
-        return {
-            hello: "world",
-        };
+        return this.abc;
     }
 }
